@@ -136,8 +136,16 @@ namespace AsyncServer
         /// </summary>
         public virtual void StartServer()
         {
-            _serverSocket.Listen(0);
-            _serverSocket.BeginAccept(OnNewConnCallBack, null);
+            try
+            {
+                _serverSocket.Listen(0);
+                _serverSocket.BeginAccept(OnNewConnCallBack, null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error : 在[{0}] 函数中发生异常 : {1}", "OnNewConnCallBack", e);
+            }
+
         }
 
         /// <summary>
@@ -145,11 +153,27 @@ namespace AsyncServer
         /// </summary>
         public virtual void OnNewConnCallBack(IAsyncResult ar)
         {
-            Socket clientSocket = _serverSocket.EndAccept(ar);
-            //TODO...
+            try
+            {
+                Socket clientSocket = _serverSocket.EndAccept(ar);
+                //TODO...
+                IClient client = new Client(clientSocket, this);
 
-            //继续启动监听
-            _serverSocket.BeginAccept(OnNewConnCallBack, null);
+                _listClient.Add(client);
+
+                //开启客户端的监听
+                client.StartRecv();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error : 在[{0}] 函数中发生异常 : {1}", "OnNewConnCallBack", e);
+            }
+            finally
+            {
+                //继续启动监听
+                _serverSocket.BeginAccept(OnNewConnCallBack, null);
+            }
+
         }
     }
 }
