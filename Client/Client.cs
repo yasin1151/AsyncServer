@@ -87,12 +87,20 @@ namespace Client
         /// <param name="ar"></param>
         public virtual void OnRecvMsgCallBack(IAsyncResult ar)
         {
-            int count = _clientSocket.EndReceive(ar);
+            try
+            {
+                int count = _clientSocket.EndReceive(ar);
 
-            //处理消息，然后转发给回调函数
-            _msg.AnalysisMsg(count, OnAnalysisMsgCallBack);
+                //处理消息，然后转发给回调函数
+                _msg.AnalysisMsg(count, OnAnalysisMsgCallBack);
 
-            StartRecv();
+                StartRecv();
+            }
+            catch (Exception)
+            {
+                Close();
+            }
+
         }
 
         /// <summary>
@@ -105,7 +113,7 @@ namespace Client
         }
 
         /// <summary>
-        /// 连接服务端，有自动重连机制
+        /// 连接服务端
         /// </summary>
         /// <param name="ip">服务端ip</param>
         /// <param name="port">服务端端口</param>
@@ -135,6 +143,17 @@ namespace Client
         public void SendMsg(string msg)
         {
             _clientSocket.Send(MsgUtil.PackData2UTF8(msg));
+        }
+
+        /// <summary>
+        /// 关闭客户端
+        /// </summary>
+        public void Close()
+        {
+            if (_clientSocket != null)
+            {
+                _clientSocket.Close();
+            }
         }
 
 

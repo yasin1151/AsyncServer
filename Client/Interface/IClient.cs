@@ -38,5 +38,11 @@ namespace Client.Interface
         /// <param name="msg">消息</param>
         void SendMsg(string msg);
 
+
+        /// <summary>
+        /// 关闭客户端
+        /// </summary>
+        void Close();
+
     }
 }
