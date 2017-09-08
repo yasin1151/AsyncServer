@@ -1,7 +1,6 @@
-﻿using System.Net;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
-namespace AsyncServer.Interface
+namespace Client.Interface
 {
     /// <summary>
     /// 拥有socket的行为
@@ -28,12 +27,5 @@ namespace AsyncServer.Interface
         /// <returns>当前绑定的端口</returns>
         int GetPort();
 
-
-
-        /// <summary>
-        /// 获取IPEndPoint对象
-        /// </summary>
-        /// <returns>IPEndPoint对象</returns>
-        IPEndPoint GetIpAndPoint();
     }
 }

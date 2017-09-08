@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using AsyncServer.Interface;
-using AsyncServer.Utils;
+using Client.Interface;
+using Client.Utils;
 
-namespace AsyncServer
+namespace Client
 {
     public class Client : IClient
     {
@@ -21,11 +21,6 @@ namespace AsyncServer
         private IPEndPoint _ipEndPoint;
 
         /// <summary>
-        /// 对应的服务端
-        /// </summary>
-        private Server _server;
-
-        /// <summary>
         /// 用于处理消息
         /// </summary>
         private IMessage _msg;
@@ -36,11 +31,10 @@ namespace AsyncServer
         /// </summary>
         /// <param name="socket"></param>
         /// <param name="server"></param>
-        public Client(Socket socket, Server server)
+        public Client(Socket socket)
         {
             _clientSocket = socket;
-            _ipEndPoint = EndPoint2IPEndPoint(socket.RemoteEndPoint);
-            _server = server;
+            //_ipEndPoint = EndPoint2IPEndPoint(socket.RemoteEndPoint);
             _msg = new Message();
         }
 
@@ -73,34 +67,6 @@ namespace AsyncServer
         }
 
         /// <summary>
-        /// 获取IPEndPoint对象
-        /// </summary>
-        /// <returns>IPEndPoint对象</returns>
-        public IPEndPoint GetIpAndPoint()
-        {
-            return _ipEndPoint;
-        }
-
-
-        /// <summary>
-        /// 获取对server的引用
-        /// </summary>
-        /// <returns>server对象</returns>
-        public Server GetServer()
-        {
-            return _server;
-        }
-
-        /// <summary>
-        /// 设置server对象
-        /// </summary>
-        /// <param name="server">server对象</param>
-        public void SetServer(Server server)
-        {
-            _server = server;
-        }
-
-        /// <summary>
         /// 客户端开始接受消息
         /// </summary>
         public virtual void StartRecv()
@@ -121,28 +87,12 @@ namespace AsyncServer
         /// <param name="ar"></param>
         public virtual void OnRecvMsgCallBack(IAsyncResult ar)
         {
-            try
-            {
+            int count = _clientSocket.EndReceive(ar);
 
-                int count = _clientSocket.EndReceive(ar);
+            //处理消息，然后转发给回调函数
+            _msg.AnalysisMsg(count, OnAnalysisMsgCallBack);
 
-
-                if (count <= 0)
-                {
-                    //下线
-                    Close();
-                }
-
-                //处理消息，然后转发给回调函数
-                _msg.AnalysisMsg(count, OnAnalysisMsgCallBack);
-
-                StartRecv();
-            }
-            catch (Exception e)
-            {
-                Close();
-            }
-
+            StartRecv();
         }
 
         /// <summary>
@@ -152,19 +102,39 @@ namespace AsyncServer
         public virtual void OnAnalysisMsgCallBack(string data)
         {
             Console.WriteLine("Recv [{0}] : {1}", _clientSocket.RemoteEndPoint, data);
-            _clientSocket.Send(MsgUtil.PackData2UTF8("hello"));
         }
 
         /// <summary>
-        /// 客户端下线
+        /// 连接服务端，有自动重连机制
         /// </summary>
-        public void Close()
+        /// <param name="ip">服务端ip</param>
+        /// <param name="port">服务端端口</param>
+        public void Connect(string ip, int port)
         {
-            if (_clientSocket != null)
+            if (_clientSocket.Connected)
             {
-                _clientSocket.Close();
-                _server.RemoveClient(this);
+                return;
             }
+
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+
+            try
+            {
+                _clientSocket.Connect(ip, port);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        /// <summary>
+        /// 发送消息给服务端
+        /// </summary>
+        /// <param name="msg">消息</param>
+        public void SendMsg(string msg)
+        {
+            _clientSocket.Send(MsgUtil.PackData2UTF8(msg));
         }
 
 

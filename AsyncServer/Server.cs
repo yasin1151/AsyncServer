@@ -87,9 +87,18 @@ namespace AsyncServer
         /// 获取当前socket绑定的端口
         /// </summary>
         /// <returns>当前绑定的端口</returns>
-        public int GetPoint()
+        public int GetPort()
         {
             return _ipEndPoint.Port;
+        }
+
+        /// <summary>
+        /// 获取IPEndPoint对象
+        /// </summary>
+        /// <returns>IPEndPoint对象</returns>
+        public IPEndPoint GetIpAndPoint()
+        {
+            return _ipEndPoint;
         }
 
         /// <summary>
@@ -117,7 +126,9 @@ namespace AsyncServer
         /// <returns>是否移除成功</returns>
         public bool RemoveClient(IClient client)
         {
-            return _listClient.Remove(client);
+            bool ret =  _listClient.Remove(client);
+            LogClientOffline(client.GetIpAndPoint());
+            return ret;
         }
 
         /// <summary>
@@ -161,6 +172,8 @@ namespace AsyncServer
 
                 _listClient.Add(client);
 
+                LogClientOnline(client.GetIpAndPoint());
+
                 //开启客户端的监听
                 client.StartRecv();
             }
@@ -174,6 +187,24 @@ namespace AsyncServer
                 _serverSocket.BeginAccept(OnNewConnCallBack, null);
             }
 
+        }
+
+        /// <summary>
+        /// 打印客户端下线消息
+        /// </summary>
+        /// <param name="ipEndPoint"></param>
+        private void LogClientOffline(IPEndPoint ipEndPoint)
+        {
+            Console.WriteLine("客户端 [{0}] 下线, 当前在线人数 : {1}", ipEndPoint, _listClient.Count);
+        }
+
+        /// <summary>
+        /// 打印客户端上线消息
+        /// </summary>
+        /// <param name="ipEndPoint"></param>
+        private void LogClientOnline(IPEndPoint ipEndPoint)
+        {
+            Console.WriteLine("客户端 [{0}] 上线, 当前在线人数 : {1}", ipEndPoint, _listClient.Count);
         }
     }
 }

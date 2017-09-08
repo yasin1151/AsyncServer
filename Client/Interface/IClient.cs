@@ -1,23 +1,12 @@
 ﻿using System;
 
-namespace AsyncServer.Interface
+namespace Client.Interface
 {
     /// <summary>
     /// 定义客户端行为
     /// </summary>
     public interface IClient : IHaveSocketable
     {
-        /// <summary>
-        /// 获取对server的引用
-        /// </summary>
-        /// <returns>server对象</returns>
-        Server GetServer();
-
-        /// <summary>
-        /// 设置server对象
-        /// </summary>
-        /// <param name="server">server对象</param>
-        void SetServer(Server server);
 
         /// <summary>
         /// 客户端开始接受消息
@@ -37,8 +26,17 @@ namespace AsyncServer.Interface
         void OnAnalysisMsgCallBack(string data);
 
         /// <summary>
-        /// 客户端下线
+        /// 连接服务端，有自动重连机制
         /// </summary>
-        void Close();
+        /// <param name="ip">服务端ip</param>
+        /// <param name="port">服务端端口</param>
+        void Connect(string ip, int port);
+
+        /// <summary>
+        /// 发送消息给服务端
+        /// </summary>
+        /// <param name="msg">消息</param>
+        void SendMsg(string msg);
+
     }
 }

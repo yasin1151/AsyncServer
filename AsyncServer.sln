@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncServer", "AsyncServer\AsyncServer.csproj", "{6E01450A-E681-4C24-876F-04436396EC5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{4B75ADAB-5026-4348-8F9F-A901F1437677}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6E01450A-E681-4C24-876F-04436396EC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E01450A-E681-4C24-876F-04436396EC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E01450A-E681-4C24-876F-04436396EC5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B75ADAB-5026-4348-8F9F-A901F1437677}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B75ADAB-5026-4348-8F9F-A901F1437677}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B75ADAB-5026-4348-8F9F-A901F1437677}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B75ADAB-5026-4348-8F9F-A901F1437677}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
